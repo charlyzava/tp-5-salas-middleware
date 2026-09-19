@@ -1,0 +1,16 @@
+[
+ {
+ "id": 1,
+ "nombre": "Cuenco de cerámica",
+ "categoria": "Cerámica",
+ "precio": 18500,
+ "descripcion": "Pieza modelada y esmaltada a mano."
+ },
+ {
+ "id": 2,
+ "nombre": "Cuaderno cosido",
+ "categoria": "Papelería",
+ "precio": 9200,
+ "descripcion": "Cuaderno de tapa dura con encuadernación artesanal."
+ }
+]
