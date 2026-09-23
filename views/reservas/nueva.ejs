@@ -1,0 +1,85 @@
+<!--<section class="panel-formulario">
+ <p class="etiqueta">NUEVA INSCRIPCION</p>
+ <h1><%= titulo %></h1>
+ <% if (error) { %>
+ <p class="error" role="alert"><%= error %></p>
+ <% } %>
+ <form action="/inscripciones" method="post" class="formulario">
+ <label for="nombre">Participante</label>
+ <input id="nombre" name="nombre" value="<%= valores.participante ?? '' %>" required>
+ <label for="categoria">Recorrido</label>
+ <input id="categoria" name="categoria" value="<%= valores.recorrido ?? '' %>" required>
+ <label for="precio">Fecha</label>
+ <input id="precio" name="precio" type="date"  value="<%= valores.fecha ?? '' %>" required>
+ <label for="descripcion">Descripción</label>
+
+<input id="lugares" name="lugares" type="number" min="1" step="1"  value="<%= valores.lugares ?? '' %>" required>
+<label for="recorridosPermitidos">Recorridos Permitidos</label>
+ <input id="recorridosPermitidos" name="recorridosPermitidos"  value="<%= valores.recorridosPermitidos ?? '' %>" required>
+
+  <button type="submit">Guardar Inscripciones</button>
+ </form>
+</section>
+-->
+
+<section class="panel-formulario">
+
+    <p class="etiqueta">NUEVA INSCRIPCIÓN</p>
+
+    <h1><%= titulo %></h1>
+
+    <% if (error) { %>
+        <p class="error" role="alert"><%= error %></p>
+    <% } %>
+
+    <form action="/inscripciones" method="post" class="formulario">
+
+        <label for="participante">Participante</label>
+        <input
+            id="participante"
+            name="participante"
+            value="<%= valores.participante ?? '' %>"
+            required
+        >
+
+        <label for="recorrido">Recorrido</label>
+        <input
+            id="recorrido"
+            name="recorrido"
+            value="<%= valores.recorrido ?? '' %>"
+            required
+        >
+
+        <label for="fecha">Fecha</label>
+        <input
+            id="fecha"
+            name="fecha"
+            type="date"
+            value="<%= valores.fecha ?? '' %>"
+            required
+        >
+
+        <label for="lugares">Lugares</label>
+        <input
+            id="lugares"
+            name="lugares"
+            type="number"
+            min="1"
+            max="5"
+            step="1"
+            value="<%= valores.lugares ?? '' %>"
+            required
+        >
+
+        <label for="recorridosPermitidos">Recorridos permitidos</label>
+        <input
+            id="recorridosPermitidos"
+            name="recorridosPermitidos"
+            value="<%= valores.recorridosPermitidos ?? '' %>"
+        >
+
+        <button type="submit">Guardar inscripción</button>
+
+    </form>
+
+</section>

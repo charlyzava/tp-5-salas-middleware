@@ -1,11 +1,11 @@
 {
-  "name": "clase-4-mercadoartesanal",
+  "name": "clase-5-salas-middleware",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
-    "check": "node --check src/index.js && node --check src/archivos.js"
+    "check": "node --check src/index.js"
   },
   "keywords": [],
   "author": "",

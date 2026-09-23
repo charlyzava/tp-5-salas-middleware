@@ -1,0 +1,60 @@
+
+
+<section class="panel-formulario">
+
+    <p class="etiqueta">NUEVA INSCRIPCIÓN</p>
+
+    <h1><%= titulo %></h1>
+
+    <% if (error) { %>
+        <p class="error" role="alert"><%= error %></p>
+    <% } %>
+
+    <form action="/inscripciones" method="post" class="formulario">
+
+        <label for="participante">Participante</label>
+        <input
+            id="participante"
+            name="participante"
+            value="<%= valores.participante ?? '' %>"
+            required
+        >
+
+        <label for="recorrido">Recorrido</label>
+
+<select id="recorrido" name="recorrido" required>
+  <option value="">Seleccioná un recorrido</option>
+
+  <% recorridosPermitidos.forEach(recorrido => { %>
+    <option value="<%= recorrido %>">
+      <%= recorrido %>
+    </option>
+  <% }) %>
+</select>
+
+        <label for="fecha">Fecha</label>
+        <input
+            id="fecha"
+            name="fecha"
+            type="date"
+            value="<%= valores.fecha ?? '' %>"
+            required
+        >
+
+        <label for="lugares">Lugares</label>
+        <input
+            id="lugares"
+            name="lugares"
+            type="number"
+            min="1"
+            max="5"
+            step="1"
+            value="<%= valores.lugares ?? '' %>"
+            required
+        >
+
+        <button type="submit">Guardar inscripción</button>
+
+    </form>
+
+</section>
