@@ -5,29 +5,11 @@ const path = require("node:path");
 
 const PORT = 3000;
 
-/*
-const inscripciones = [
-    {
-        "id": 1,
-        "participante": "Carlos Pérez",
-        "recorrido": "Mirador del Bosque",
-        "fecha": "2026-09-22",
-        "lugares": 1
-    },
-    {
-        "id": 2,
-        "participante": "María González",
-        "recorrido": "Sendero del Arroyo",
-        "fecha": "2026-09-22",
-        "lugares": 1
-    }
-]*/
-
 const reservas = [
     {
         "id": 1,
-        "estudiante": "Ricardo Lopez",
-        "email": "ricardo5534@hotmail.com",
+        "estudiante": "Artemio",
+        "email": "artemio_japon@hotmail.com",
         "sala": "Sala Norte",
         "fecha": "2026-09-25",
         "turno": "Mañana",
@@ -35,26 +17,51 @@ const reservas = [
     },
     {
         "id": 2,
-        "estudiante": "Agustina Gutierrez",
-        "email": "agu_lamejor@gmail.com",
+        "estudiante": "Katerina Moya",
+        "email": "kat_201145@gmail.com",
         "sala": "Sala Multimedia",
         "fecha": "2026-09-26",
         "turno": "Noche",
         "personas": 3
+    },
+        {
+        "id": 3,
+        "estudiante": "Estanislao Gutierrez",
+        "email": "motorhome22@yahoo.com.ar",
+        "sala": "Sala Sur",
+        "fecha": "2026-10-22",
+        "turno": "Mañana",
+        "personas": 1
+    },
+        {
+        "id": 4,
+        "estudiante": "Abigail Maza",
+        "email": "abimazacat@gmail.com",
+        "sala": "Sala Multimedia",
+        "fecha": "2026-11-05",
+        "turno": "Tarde",
+        "personas": 3
+    },
+        {
+        "id": 5,
+        "estudiante": "Katerina Moya",
+        "email": "kat_201145@gmail.com",
+        "sala": "Sala Multimedia",
+        "fecha": "2026-09-26",
+        "turno": "Noche",
+        "personas": 5
     }
 
 ]
 
 const salasPermitidas = ["Sala Norte", "Sala Sur", "Sala Multimedia"];
-    //const recorridosPermitidos = ["Sendero del arroyo", "Mirador del bosque"];
-
+ const turnosPermitidos = ["Mañana", "Tarde", "Noche"];
 //middleware
 let numeroDeSolicitud = 0;
 function identificarSolicitud(req, res, next) {
     numeroDeSolicitud += 1;
-    //res.locals.solicitudId = `SOL-${String(numeroDeSolicitud).padStart(4, "0")}`;
-    res.locals.solicitud = `CAM-${String(numeroDeSolicitud)}`;
-    console.log(`identificarSolicitud : [res.locals.solicitudId] ${req.method} $req.originalurl`);
+    res.locals.solicitud = `BIB-${String(numeroDeSolicitud).padStart(4,"0")}`;
+    console.log(`identificarSolicitud : [${res.locals.solicitud}] ${req.method} ${req.originalurl}`);
     next();
 }
 
@@ -62,66 +69,113 @@ function identificarSolicitud(req, res, next) {
 function medirDuracion(req, res, next) {
     const inicio = process.hrtime.bigint();
     res.on("finish", () => {
-
         const duracion = Number(process.hrtime.bigint() - inicio) / 1_000_000;
-
         console.log(
-            `duracion: [${res.locals.soicitudId}] ${req.method} ${req.originalUrl} ${res.statusCode} ${duracion.toFixed(2)} ms`,
+            `duracion: [${res.locals.solicitud}] ${req.method} ${req.originalUrl} ${res.statusCode} ${duracion.toFixed(2)} ms`,
         );
     });
     next();
 }
 
 //middleware
-/*function prepararAreaCaminatas(req, res, next) {
-    res.locals.seccion = "Inscripciones a Caminatas";
-    console.log("seccion: " + res.locals.seccion);
-    next();
-}*/
-function reservaSalasEstudio(req,res,next){
-    res.locals.seccion = "Reserva de Sala de Estudio";
+function prepararAreaReservas(req, res, next) {
+    res.locals.seccion = "Reservas programadas";
     console.log("seccion: " + res.locals.seccion);
     next();
 }
 
 //middleware
-function validarinscripcion(req, res, next) {
-    const participante = req.body.participante?.trim();
-    const recorrido = req.body.recorrido?.trim();
+function validarReserva(req, res, next) {
+    const estudiante = req.body.estudiante?.trim();
+    const email = req.body.email?.trim();
+    const sala = req.body.sala?.trim();
     const fecha = req.body.fecha?.trim();
-    const lugares = Number(req.body.lugares);
+    const turno = req.body.turno?.trim();
 
+    const personasTexto = req.body.personas;
+    const personas = Number(personasTexto);
 
-    const datosValidos =
-        participante &&
-        recorridosPermitidos.includes(recorrido) &&
-        fecha &&
-        Number.isInteger(lugares) &&
-        lugares >= 1 &&
-        lugares <= 5;
+    const errores = [];
 
-    if (!datosValidos) {
-        return res.status(400).render("inscripcion/nueva", {
-            titulo: "nueva inscripcion",
-            error: "revisa los cambios y elegi entre 1 y 5 lugares.",
+    // Estudiante
+    if (!estudiante) {
+        errores.push("El estudiante es obligatorio.");
+    }
+
+    // Email
+    if (!email) {
+        errores.push("El email es obligatorio.");
+    } else {
+        const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailValido.test(email)) {
+            errores.push("El email no tiene un formato válido.");
+        }
+    }
+
+    // Fecha
+    if (!fecha) {
+        errores.push("La fecha es obligatoria.");
+    }
+
+    // Personas
+    if (!personasTexto) {
+        errores.push("La cantidad de personas es obligatoria.");
+    } else if (!Number.isInteger(personas) || personas < 1 || personas > 6) {
+        errores.push("La cantidad de personas debe ser un número entero entre 1 y 6.");
+    }
+
+    // Sala
+    if (!sala) {
+        errores.push("Debes seleccionar una sala.");
+    } else if (!salasPermitidas.includes(sala)) {
+        errores.push("La sala seleccionada no es válida.");
+    }
+
+    // Turno
+    if (!turno) {
+        errores.push("Debes seleccionar un turno.");
+    } else if (!turnosPermitidos.includes(turno)) {
+        errores.push("El turno seleccionado no es válido.");
+    }
+
+    // Si hay errores, volvemos al formulario
+    if (errores.length > 0) {
+        return res.status(400).render("reservas/nueva", {
+            titulo: "Nueva reserva",
+            errores,
             valores: req.body,
+            salasPermitidas,
+            turnosPermitidos
         });
     }
 
-    req.inscripcionValidada = { participante, recorrido, fecha, lugares };
-    next();
+    // Todo correcto
+    req.reservaValidada = {
+        estudiante,
+        email,
+        sala,
+        fecha,
+        turno,
+        personas
+    };
 
+    next();
 }
 
+
+
+
+
 //middleware
-function crearInscripcion(req, res) {
+function crearReserva(req, res) {
     const ultimoId =
-        inscripciones.length === 0 ? 0 : inscripciones[inscripciones.length - 1].id;
-    inscripciones.push({
+        reservas.length === 0 ? 0 : reservas[reservas.length - 1].id;
+    reservas.push({
         id: ultimoId + 1,
-        ...req.inscripcionValidada,/* puede ser validado*/
+        ...req.reservaValidada,/* puede ser validado*/
     });
-    res.redirect("/inscripciones");
+    res.redirect("/reservas");
 }
 
 const app = express();
@@ -135,65 +189,61 @@ app.use(expressLayouts);
 app.use(express.static(path.join(__dirname, "..", "public")));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-/**/
-
 
 app.get("/", (req, res) => {
-    res.status(200).render("inicio", { titulo: "Caminatas del Valle" });
+    res.status(200).render("inicio", { titulo: "Reservas de salas" });
 });
+
 app.get("/estado", (req, res) => {
     res.status(200).json({
         servicio: "activo",
-        inscripciones: inscripciones.length,
+        reservas: reservas.length,
         solicitud: res.locals.solicitudId
     })
 })
 
 
+const reservasRouter = express.Router();
 
+reservasRouter.use(prepararAreaReservas);
 
-
-const caminatasRouter = express.Router();
-
-caminatasRouter.use(prepararAreaCaminatas);
-
-caminatasRouter.get("/", (req, res) => {
-    res.status(200).render("inscripciones/lista", {
-        titulo: "Inscripciones",
-        inscripciones,
+reservasRouter.get("/", (req, res) => {
+    res.status(200).render("reservas/lista", {
+        titulo: "reservas",
+        reservas,
     })
 })
 
 
-caminatasRouter.post("/", validarinscripcion, crearInscripcion);
+reservasRouter.post("/", validarReserva, crearReserva);
 
-app.use("/inscripciones", caminatasRouter);
+app.use("/reservas", reservasRouter);
 
-
-
-caminatasRouter.get("/nueva", (req, res) => {
-    res.status(200).render("inscripciones/nueva", {
-        titulo: "nueva Inscripcion",
-        error: null,
+reservasRouter.get("/nueva", (req, res) => {
+    res.status(200).render("reservas/nueva", {
+        titulo: "nueva reserva",
+        errores: null,
+        error: null, //creo que hay que sacarlo
         valores: {},
-        recorridosPermitidos
+        salasPermitidas,
+        turnosPermitidos
     })
 })
 
-app.get("/inscripciones/:id", (req, res) => {
- const id = Number(req.params.id);
- const inscripcion = inscripciones.find((elemento) => elemento.id === id);
- if (!inscripcion) {
- return res.status(404).render("no-encontrado", {
- titulo: "Mascota no encontrada",
- mensaje: "No existe una mascota con ese identificador.",
- });
- }
+app.get("/reservas/:id", (req, res) => {
+    const id = Number(req.params.id);
+    const reserva = reservas.find((elemento) => elemento.id === id);
+    if (!reserva) {
+        return res.status(404).render("no-encontrado", {
+            titulo: "Reserva no encontrada",
+            mensaje: "No existe una rerserva.",
+        });
+    }
 
- res.render("inscripciones/detalle", {
- titulo: inscripcion.participante,
- inscripcion,
- });
+    res.render("reservas/detalle", {
+        titulo: reserva.estudiante,
+        reserva,
+    });
 });
 
 app.listen(PORT, () => {

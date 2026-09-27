@@ -1,24 +1,42 @@
 <header class="cabecera-pagina">
- <div>
- <p class="etiqueta"><%= seccion %></p>
- <h1><%= titulo %></h1>
- </div>
- <a class="boton" href="/inscripciones/nueva">Nueva Inscripcion</a>
- </header>
-<% if (inscripciones.length === 0) { %>
- <p>No hay inscripciones registradas</p>
-<% } else { %>
- <section class="grilla" aria-label="Inscripciones registradas">
- <% inscripciones.forEach((inscripcion) => { %>
- <article class="tarjeta">
+    <div>
+        <p class="etiqueta">
+            <%= seccion %>
+        </p>
+        <h1>
+            <%= titulo %>
+        </h1>
+    </div>
+    <a class="boton" href="/reservas/nueva">Nueva reserva</a>
+</header>
+<% if (reservas.length===0) { %>
+    <p>No hay reservas registradas</p>
+    <% } else { %>
+        <section class="grilla" aria-label="Reservas registradas">
+            <% reservas.forEach((reserva)=> { %>
+                <article class="tarjeta">
 
- <h2><%= inscripcion.participante %></h2>
- <p><%= inscripcion.recorrido %></p>
- <p><%= inscripcion.fecha %> - <%= inscripcion.lugares %> lugar(es)</p>
-<a href="/inscripciones/<%= inscripcion.id %>">Ver detalle</a>
+                    <h2>
+                        <%= reserva.id%> - <%= reserva.estudiante %>
+                    </h2>
+                    <p>
+                        <%= reserva.email %>
+                    </p>
+                    <p>
+                       Fecha: <%= reserva.fecha %>
+                    </p>
+                    <p>
+                       Sala: <%= reserva.sala %>
+                    </p>
+                    <p>
+                       Turno: <%= reserva.turno %>
+                    </p>
+                    <p>
+                        Cantidad de Personas :<%= reserva.personas %>
+                    </p>
+                    <a href="/reservas/<%= reserva.id %>">Ver detalle</a>
 
- </article>
- <% }) %>
- </section>
-<% } %>
-
+                </article>
+                <% }) %>
+        </section>
+        <% } %>

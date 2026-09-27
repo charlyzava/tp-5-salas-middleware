@@ -1,85 +1,61 @@
-<!--<section class="panel-formulario">
- <p class="etiqueta">NUEVA INSCRIPCION</p>
- <h1><%= titulo %></h1>
- <% if (error) { %>
- <p class="error" role="alert"><%= error %></p>
- <% } %>
- <form action="/inscripciones" method="post" class="formulario">
- <label for="nombre">Participante</label>
- <input id="nombre" name="nombre" value="<%= valores.participante ?? '' %>" required>
- <label for="categoria">Recorrido</label>
- <input id="categoria" name="categoria" value="<%= valores.recorrido ?? '' %>" required>
- <label for="precio">Fecha</label>
- <input id="precio" name="precio" type="date"  value="<%= valores.fecha ?? '' %>" required>
- <label for="descripcion">Descripción</label>
-
-<input id="lugares" name="lugares" type="number" min="1" step="1"  value="<%= valores.lugares ?? '' %>" required>
-<label for="recorridosPermitidos">Recorridos Permitidos</label>
- <input id="recorridosPermitidos" name="recorridosPermitidos"  value="<%= valores.recorridosPermitidos ?? '' %>" required>
-
-  <button type="submit">Guardar Inscripciones</button>
- </form>
-</section>
--->
-
 <section class="panel-formulario">
 
-    <p class="etiqueta">NUEVA INSCRIPCIÓN</p>
+    <p class="etiqueta">NUEVA RESERVA</p>
 
-    <h1><%= titulo %></h1>
+    <h1>
+        <%= titulo %>
+    </h1>
 
-    <% if (error) { %>
-        <p class="error" role="alert"><%= error %></p>
-    <% } %>
 
-    <form action="/inscripciones" method="post" class="formulario">
+ <% if (errores && errores.length > 0) { %>
+    <div class="errores">
+        <h3>Hay errores en el formulario:</h3>
 
-        <label for="participante">Participante</label>
-        <input
-            id="participante"
-            name="participante"
-            value="<%= valores.participante ?? '' %>"
-            required
-        >
+        <ul>
+            <% errores.forEach(error => { %>
+                <li><%= error %></li>
+            <% }); %>
+        </ul>
+    </div>
+<% } %>
 
-        <label for="recorrido">Recorrido</label>
-        <input
-            id="recorrido"
-            name="recorrido"
-            value="<%= valores.recorrido ?? '' %>"
-            required
-        >
+ 
+            <form action="/reservas" method="post" class="formulario">
 
-        <label for="fecha">Fecha</label>
-        <input
-            id="fecha"
-            name="fecha"
-            type="date"
-            value="<%= valores.fecha ?? '' %>"
-            required
-        >
+                <label for="estudiante">Estudiante</label>
+                <input id="estudiante" name="estudiante" value="<%= valores.estudiante ?? '' %>" required>
 
-        <label for="lugares">Lugares</label>
-        <input
-            id="lugares"
-            name="lugares"
-            type="number"
-            min="1"
-            max="5"
-            step="1"
-            value="<%= valores.lugares ?? '' %>"
-            required
-        >
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" value="<%= valores.email ?? '' %>" required>
 
-        <label for="recorridosPermitidos">Recorridos permitidos</label>
-        <input
-            id="recorridosPermitidos"
-            name="recorridosPermitidos"
-            value="<%= valores.recorridosPermitidos ?? '' %>"
-        >
+                <label for="fecha">Fecha</label>
+                <input id="fecha" name="fecha" type="date" value="<%= valores.fecha ?? '' %>" required>
 
-        <button type="submit">Guardar inscripción</button>
+                <label for="turno">Turno</label>
+                <select id="turno" name="turno" required>
+                    <option value="">Selecciona una sala</option>
+                    <% turnosPermitidos.forEach(turno=> { %>
+                        <%= valores.turno === turno ? "selected" : "" %>>
+                        <option value="<%= turno %>">
+                            <%= turno %>
+                        </option>
+                        <% }); %>
+                </select>
 
-    </form>
+                <label for="personas">Cantidad de personas</label>
+                <input id="personas" name="personas" type="number" min="1" max="6" step="1"
+                    value="<%= valores.personas ?? '' %>" required>
 
+                <label for="sala">Sala</label>
+                <select id="sala" name="sala" required>
+                    <option value="">Selecciona una sala</option>
+                    <% salasPermitidas.forEach(sala=> { %>
+                        <%= valores.sala === sala ? "selected" : "" %>>
+                        <option value="<%= sala %>">
+                            <%= sala %>
+                        </option>
+                        <% }); %>
+                </select>
+                <button type="submit">Guardar reserva</button>
+            </form>
 </section>
