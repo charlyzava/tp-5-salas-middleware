@@ -53,25 +53,34 @@ POST	    /reservas	        Validación y creación de una reserva	Redirección 3
 
 El pipeline global de la aplicación sigue el siguiente orden:
 
-Morgan
-   ↓
+Solicitud HTTP
+    ↓
+morgan("dev")
+    ↓
 identificarSolicitud
-   ↓
+    ↓
 medirDuracion
-   ↓
+    ↓
 expressLayouts
-   ↓
+    ↓
 express.static
-   ↓
+    ↓
 express.urlencoded
-   ↓
+    ↓
 express.json
-   ↓
-rutas de aplicación
-   ↓
-router de reservas
-   ↓
-página 404
+    ↓
+Rutas de la aplicación
+    ↓
+Router de reservas (cuando corresponde)
+    ↓
+prepararAreaReservas
+    ↓
+Validación y controlador correspondiente
+    ↓
+Middleware 404 (si ninguna ruta responde)
+
+
+
 El orden es importante porque cada middleware puede preparar información que será utilizada posteriormente.
 Para una reserva válida, el recorrido completo es:
 POST /reservas
@@ -142,26 +151,51 @@ GET /reservas 200 8.124 ms - 2310
 
 ## Validación
 
+La validación de los datos se realiza mediante el middleware personalizado validarReserva, que se ejecuta antes del controlador crearReserva.
 
+Se verifican los siguientes campos:
+
+Estudiante: es obligatorio y no puede quedar vacío.
+
+Email: es obligatorio y debe tener un formato válido.
+
+Fecha: es obligatoria.
+
+Sala: debe pertenecer a la lista de salas permitidas.
+
+Turno: debe pertenecer a la lista de turnos permitidos.
+
+Personas: debe ser un número entero dentro del rango permitido por la aplicación.
+
+Cuando se detectan errores, se devuelve una respuesta HTTP 400 y se vuelve a mostrar el formulario con los mensajes correspondientes. Los valores ingresados se conservan para que el usuario no tenga que completar todo nuevamente.
+
+Cuando todos los datos son válidos, se guardan temporalmente en req.reservaValidada y se ejecuta next() para continuar hacia crearReserva.
+
+El controlador agrega la nueva reserva al arreglo en memoria y redirige al listado mediante res.redirect("/reservas").
 
 ## Pruebas manuales
 
-Inicio	            200	    Navegación e ID de solicitud
-Estado	            200	    JSON con cantidad e ID
-Listado         	200	    Cuatro o más reservas
-Estado vacío	    200	    Mensaje alternativo
-Formulario	        200	    Controles correctamente etiquetados
-Detalle válido	    200	    Datos completos
-Detalle inexistente	404	    Página HTML de error
-Campos vacíos	    400	    Error y valores conservados
-Sala no permitida	400	    No se crea reserva
-Turno no permitido	400	    No se crea reserva
-Email sin @	        400	    No se crea reserva
-Personas igual a 0	400	    No se crea reserva
-Personas igual a 7	400	    No se crea reserva
-Reserva válida	    302     → 200	Nueva reserva visible
-URL inexistente	    404	    Middleware 404
-Reinicio	        200	    Regreso a datos iniciales
+## Pruebas manuales
+
+| Prueba | Resultado esperado | Verificación |
+|---|---:|---|
+| Inicio | 200 | Página de inicio |
+| Estado del servicio | 200 | JSON con cantidad de reservas e identificador |
+| Listado de reservas | 200 | Se muestran las reservas iniciales |
+| Formulario nuevo | 200 | Controles etiquetados y selectores |
+| Detalle existente | 200 | Datos completos de la reserva |
+| Reserva inexistente | 404 | Página de error |
+| URL inexistente | 404 | Middleware 404 general |
+| Campos obligatorios vacíos | 400 | Errores y valores conservados |
+| Sala no permitida | 400 | No se crea la reserva |
+| Turno no permitido | 400 | No se crea la reserva |
+| Email inválido | 400 | Mensaje de validación |
+| Personas igual a 0 | 400 | No se crea la reserva |
+| Personas igual a 7 | 400 | No se crea la reserva, si el máximo es 6 |
+| Reserva válida | 302 | Redirección al listado |
+| GET posterior a la redirección | 200 | Nueva reserva visible |
+| Reinicio del servidor | 200 | Se recuperan los datos iniciales |
+
 
 
 ## Persistencia temporal

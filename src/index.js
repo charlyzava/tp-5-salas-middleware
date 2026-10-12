@@ -57,11 +57,12 @@ const reservas = [
 const salasPermitidas = ["Sala Norte", "Sala Sur", "Sala Multimedia"];
  const turnosPermitidos = ["Mañana", "Tarde", "Noche"];
 //middleware
+
 let numeroDeSolicitud = 0;
 function identificarSolicitud(req, res, next) {
     numeroDeSolicitud += 1;
-    res.locals.solicitud = `BIB-${String(numeroDeSolicitud).padStart(4,"0")}`;
-    console.log(`identificarSolicitud : [${res.locals.solicitud}] ${req.method} ${req.originalurl}`);
+    res.locals.solicitudId = `BIB-${String(numeroDeSolicitud).padStart(4,"0")}`;
+    console.log(`identificarSolicitud : [${res.locals.solicitudId}] ${req.method} ${req.originalUrl}`);
     next();
 }
 
@@ -71,7 +72,7 @@ function medirDuracion(req, res, next) {
     res.on("finish", () => {
         const duracion = Number(process.hrtime.bigint() - inicio) / 1_000_000;
         console.log(
-            `duracion: [${res.locals.solicitud}] ${req.method} ${req.originalUrl} ${res.statusCode} ${duracion.toFixed(2)} ms`,
+            `duracion: [${res.locals.solicitudId}] ${req.method} ${req.originalUrl} ${res.statusCode} ${duracion.toFixed(2)} ms`,
         );
     });
     next();
@@ -214,11 +215,6 @@ reservasRouter.get("/", (req, res) => {
     })
 })
 
-
-reservasRouter.post("/", validarReserva, crearReserva);
-
-app.use("/reservas", reservasRouter);
-
 reservasRouter.get("/nueva", (req, res) => {
     res.status(200).render("reservas/nueva", {
         titulo: "nueva reserva",
@@ -229,6 +225,10 @@ reservasRouter.get("/nueva", (req, res) => {
         turnosPermitidos
     })
 })
+
+reservasRouter.post("/", validarReserva, crearReserva);
+
+app.use("/reservas", reservasRouter);
 
 app.get("/reservas/:id", (req, res) => {
     const id = Number(req.params.id);
@@ -243,6 +243,13 @@ app.get("/reservas/:id", (req, res) => {
     res.render("reservas/detalle", {
         titulo: reserva.estudiante,
         reserva,
+    });
+});
+
+app.use((req, res) => {
+    res.status(404).render("no-encontrado", {
+        titulo: "Página no encontrada",
+        mensaje: "La ruta solicitada no existe.",
     });
 });
 

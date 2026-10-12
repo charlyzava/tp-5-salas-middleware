@@ -7,19 +7,21 @@
     </h1>
 
 
- <% if (errores && errores.length > 0) { %>
-    <div class="errores">
-        <h3>Hay errores en el formulario:</h3>
+    <% if (errores && errores.length> 0) { %>
+        <div class="errores" role="alert">
+            <h3>Hay errores en el formulario:</h3>
 
-        <ul>
-            <% errores.forEach(error => { %>
-                <li><%= error %></li>
-            <% }); %>
-        </ul>
-    </div>
-<% } %>
+            <ul>
+                <% errores.forEach(error=> { %>
+                    <li>
+                        <%= error %>
+                    </li>
+                    <% }); %>
+            </ul>
+        </div>
+        <% } %>
 
- 
+
             <form action="/reservas" method="post" class="formulario">
 
                 <label for="estudiante">Estudiante</label>
@@ -33,10 +35,9 @@
 
                 <label for="turno">Turno</label>
                 <select id="turno" name="turno" required>
-                    <option value="">Selecciona una sala</option>
+                    <option value="">Seleccioná un turno</option>
                     <% turnosPermitidos.forEach(turno=> { %>
-                        <%= valores.turno === turno ? "selected" : "" %>>
-                        <option value="<%= turno %>">
+                        <option value="<%= turno %>" <%=valores.turno===turno ? "selected" : "" %>>
                             <%= turno %>
                         </option>
                         <% }); %>
@@ -48,10 +49,9 @@
 
                 <label for="sala">Sala</label>
                 <select id="sala" name="sala" required>
-                    <option value="">Selecciona una sala</option>
+                    <option value="">Seleccioná una sala</option>
                     <% salasPermitidas.forEach(sala=> { %>
-                        <%= valores.sala === sala ? "selected" : "" %>>
-                        <option value="<%= sala %>">
+                        <option value="<%= sala %>" <%=valores.sala===sala ? "selected" : "" %>>
                             <%= sala %>
                         </option>
                         <% }); %>
